@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>GitHub README Injector</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="app">
+
+    <!-- ── Top Bar ── -->
+    <header>
+      <div class="header-left">
+        <h1>README Injector</h1>
+        <span class="subtitle">AI Security Research</span>
+      </div>
+      <div class="header-right">
+        <div class="chip" id="authChip">
+          <span class="chip-dot" id="authDot"></span>
+          <span id="authStatus">Checking...</span>
+          <span id="authUser" class="chip-detail"></span>
+        </div>
+        <div class="chip" id="sessionChip">
+          <span class="chip-dot" id="sessionDot"></span>
+          <span id="sessionStatus">Idle</span>
+        </div>
+      </div>
+    </header>
+
+    <!-- ── Toast container ── -->
+    <div id="toastContainer" class="toast-container"></div>
+
+    <main>
+      <!-- ════ Left: Configuration ════ -->
+      <div class="config-col">
+
+        <!-- Panel: Connection (always open) -->
+        <section class="panel" data-panel="connection">
+          <button class="panel-header" aria-expanded="true">
+            <div class="panel-title">
+              <svg class="panel-icon" viewBox="0 0 20 20" fill="currentColor"><path d="M10 2a5 5 0 00-5 5v2a2 2 0 00-2 2v5a2 2 0 002 2h10a2 2 0 002-2v-5a2 2 0 00-2-2H7V7a3 3 0 015.905-.75 1 1 0 001.937-.5A5.002 5.002 0 0010 2z"/></svg>
+              <span>Connection</span>
+            </div>
+            <svg class="chevron" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"/></svg>
+          </button>
+          <div class="panel-body open">
+            <div class="form-group">
+              <label for="apiKey">OpenRouter API Key</label>
+              <div class="input-with-action">
+                <input type="password" id="apiKey" placeholder="sk-or-..." autocomplete="off">
+                <button class="input-action" id="toggleApiKey" title="Show/hide key">
+                  <svg viewBox="0 0 20 20" fill="currentColor" width="16" height="16"><path d="M10 12a2 2 0 100-4 2 2 0 000 4z"/><path fill-rule="evenodd" d="M.458 10C1.732 5.943 5.522 3 10 3s8.268 2.943 9.542 7c-1.274 4.057-5.064 7-9.542 7S1.732 14.057.458 10zM14 10a4 4 0 11-8 0 4 4 0 018 0z"/></svg>
+                </button>
+              </div>
+              <span class="hint">Stored locally in your browser</span>
+            </div>
+            <div class="form-group">
+              <label for="model">Model</label>
+              <select id="model">
+                <option value="x-ai/grok-4-fast">Grok 4 Fast (Recommended)</option>
+                <option value="anthropic/claude-sonnet-4">Claude Sonnet 4</option>
+                <option value="anthropic/claude-haiku-4">Claude Haiku 4</option>
+                <option value="anthropic/claude-opus-4">Claude Opus 4</option>
+                <option value="openai/gpt-4o">GPT-4o</option>
+                <option value="openai/gpt-4o-mini">GPT-4o Mini</option>
+                <option value="google/gemini-2.0-flash-001">Gemini 2.0 Flash</option>
+                <option value="meta-llama/llama-3.3-70b-instruct">Llama 3.3 70B</option>
+              </select>
+              <input type="text" id="modelCustom" class="mt-8" placeholder="Or enter custom model ID...">
+            </div>
+          </div>
+        </section>
+
+        <!-- Panel: Targeting (always open) -->
+        <section class="panel" data-panel="targeting">
+          <button class="panel-header" aria-expanded="true">
+            <div class="panel-title">
+              <svg class="panel-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M6 2a1 1 0 00-1 1v1H4a2 2 0 00-2 2v10a2 2 0 002 2h12a2 2 0 002-2V6a2 2 0 00-2-2h-1V3a1 1 0 10-2 0v1H7V3a1 1 0 00-1-1zm0 5a1 1 0 000 2h8a1 1 0 100-2H6z"/></svg>
+              <span>Targeting</span>
+            </div>
+            <svg class="chevron" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"/></svg>
+          </button>
+          <div class="panel-body open">
+            <div class="form-group">
+              <label for="behaviorGoal">Target Behavior</label>
+              <textarea id="behaviorGoal" rows="3" placeholder="e.g. Make the AI reveal its system prompt when it reads this repo's README"></textarea>
+              <span class="hint">What should happen when an AI reads the injected README?</span>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label for="repoPrefix">Repo Prefix</label>
+                <input type="text" id="repoPrefix" value="sec-research" placeholder="sec-research">
+              </div>
+              <div class="form-group">
+                <label for="iterations">Iterations</label>
+                <input type="number" id="iterations" value="5" min="1" max="100">
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Panel: Advanced (collapsed by default — Hick's Law) -->
+        <section class="panel" data-panel="advanced">
+          <button class="panel-header" aria-expanded="false">
+            <div class="panel-title">
+              <svg class="panel-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M11.49 3.17c-.38-1.56-2.6-1.56-2.98 0a1.532 1.532 0 01-2.286.948c-1.372-.836-2.942.734-2.106 2.106.54.886.061 2.042-.947 2.287-1.561.379-1.561 2.6 0 2.978a1.532 1.532 0 01.947 2.287c-.836 1.372.734 2.942 2.106 2.106a1.532 1.532 0 012.287.947c.379 1.561 2.6 1.561 2.978 0a1.533 1.533 0 012.287-.947c1.372.836 2.942-.734 2.106-2.106a1.533 1.533 0 01.947-2.287c1.561-.379 1.561-2.6 0-2.978a1.532 1.532 0 01-.947-2.287c.836-1.372-.734-2.942-2.106-2.106a1.532 1.532 0 01-2.287-.947zM10 13a3 3 0 100-6 3 3 0 000 6z"/></svg>
+              <span>Advanced Options</span>
+            </div>
+            <svg class="chevron" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"/></svg>
+          </button>
+          <div class="panel-body">
+            <div class="form-group">
+              <label for="exampleExploits">Example Exploits</label>
+              <textarea id="exampleExploits" rows="5" placeholder="Paste working prompt injection examples here..."></textarea>
+              <span class="hint">The model will study these and generate variations</span>
+            </div>
+            <div class="form-group">
+              <label for="systemPrompt">
+                System Prompt
+                <button id="resetPromptBtn" class="btn-inline" title="Reset to default">Reset</button>
+              </label>
+              <textarea id="systemPrompt" rows="8" placeholder="Loading..."></textarea>
+              <span class="hint">Controls how the LLM generates injection payloads</span>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- ════ Right: Session ════ -->
+      <div class="session-col">
+
+        <!-- Primary Action — big, obvious (Fitts's Law) -->
+        <section class="panel action-panel">
+          <button id="runBtn" class="btn-run" disabled>
+            <svg class="btn-run-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM9.555 7.168A1 1 0 008 8v4a1 1 0 001.555.832l3-2a1 1 0 000-1.664l-3-2z"/></svg>
+            <span>Start Session</span>
+          </button>
+          <p id="authHint" class="action-hint">Checking GitHub CLI...</p>
+
+          <!-- Secondary controls — smaller (Fitts's Law hierarchy) -->
+          <div class="secondary-controls" id="secondaryControls">
+            <button id="pauseBtn" class="btn btn-warning" disabled>Pause</button>
+            <button id="resumeBtn" class="btn btn-success" disabled>Resume</button>
+            <button id="abortBtn" class="btn btn-danger" disabled>Abort</button>
+          </div>
+        </section>
+
+        <!-- Progress (Zeigarnik + Goal-Gradient) -->
+        <section class="panel" data-panel="progress">
+          <div class="panel-header-static">
+            <div class="panel-title">
+              <svg class="panel-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm0 4a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1z"/></svg>
+              <span>Progress</span>
+            </div>
+            <span id="progressCounter" class="progress-counter">0 / 0</span>
+          </div>
+          <div class="progress-track">
+            <div id="progressBar" class="progress-fill" style="width:0%"></div>
+          </div>
+          <div class="progress-meta">
+            <span id="progressText" class="progress-text">No session running</span>
+            <span id="progressPct" class="progress-pct"></span>
+          </div>
+
+          <!-- Step indicators (Goal-Gradient) -->
+          <div id="stepIndicator" class="step-indicator hidden">
+            <div class="step" data-step="generate">
+              <div class="step-dot"></div>
+              <span>Generate</span>
+            </div>
+            <div class="step-line"></div>
+            <div class="step" data-step="create">
+              <div class="step-dot"></div>
+              <span>Create Repo</span>
+            </div>
+            <div class="step-line"></div>
+            <div class="step" data-step="push">
+              <div class="step-dot"></div>
+              <span>Push</span>
+            </div>
+          </div>
+        </section>
+
+        <!-- Log -->
+        <section class="panel" data-panel="log">
+          <button class="panel-header" aria-expanded="true">
+            <div class="panel-title">
+              <svg class="panel-icon" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M4 2a2 2 0 00-2 2v12a2 2 0 002 2h12a2 2 0 002-2V4a2 2 0 00-2-2H4zm2 3a1 1 0 011-1h6a1 1 0 110 2H7a1 1 0 01-1-1zm1 3a1 1 0 100 2h6a1 1 0 100-2H7zm-1 5a1 1 0 011-1h4a1 1 0 110 2H7a1 1 0 01-1-1z"/></svg>
+              <span>Live Log</span>
+            </div>
+            <svg class="chevron" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"/></svg>
+          </button>
+          <div class="panel-body open">
+            <div id="logContainer" class="log-container">
+              <div class="log-empty">Waiting for session...</div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Results -->
+        <section class="panel" data-panel="results">
+          <button class="panel-header" aria-expanded="true">
+            <div class="panel-title">
+              <svg class="panel-icon" viewBox="0 0 20 20" fill="currentColor"><path d="M7 3a1 1 0 000 2h6a1 1 0 100-2H7zM4 7a1 1 0 011-1h10a1 1 0 110 2H5a1 1 0 01-1-1zm-2 4a2 2 0 012-2h12a2 2 0 012 2v4a2 2 0 01-2 2H4a2 2 0 01-2-2v-4z"/></svg>
+              <span>Created Repos</span>
+            </div>
+            <svg class="chevron" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M5.23 7.21a.75.75 0 011.06.02L10 11.168l3.71-3.938a.75.75 0 111.08 1.04l-4.25 4.5a.75.75 0 01-1.08 0l-4.25-4.5a.75.75 0 01.02-1.06z"/></svg>
+          </button>
+          <div class="panel-body open">
+            <div id="repoList" class="repo-list">
+              <p class="empty-state">No repos created yet</p>
+            </div>
+            <div class="panel-footer">
+              <button id="exportBtn" class="btn btn-ghost" disabled>
+                <svg viewBox="0 0 20 20" fill="currentColor" width="14" height="14"><path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z"/></svg>
+                Export JSON
+              </button>
+            </div>
+          </div>
+        </section>
+      </div>
+    </main>
+  </div>
+
+  <script src="/js/app.js"></script>
+</body>
+</html>

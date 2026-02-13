@@ -48,7 +48,7 @@ This tool helps security researchers understand and test:
 
 1. **Clone the repository**
    ```bash
-   git clone https://github.com/YOUR_USERNAME/github-readme-injector.git
+   git clone https://github.com/squidward124/github-readme-injector
    cd github-readme-injector
    ```
 
